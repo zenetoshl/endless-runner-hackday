@@ -5,30 +5,34 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {   public float velocidadeMaxima;
     public float forcaPulo;
-    public bool estaColidindo;
-    Rigidbody2D rb;
+    private bool estaColidindo;
+    Animator animator;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-         rb = this.GetComponent<Rigidbody2D>();
+    private void Start() {
+        this.animator = GetComponent<Animator>();
     }
-
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         float movimento = Input.GetAxis("Horizontal");
-        rb.velocity = new Vector2(movimento * velocidadeMaxima, rb.velocity.y);
+        this.GetComponent<Rigidbody2D>().velocity = new Vector2(movimento * velocidadeMaxima, this.GetComponent<Rigidbody2D>().velocity.y);
 
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
         {
             if (estaColidindo)
             {
-                rb.AddForce(new Vector2(0, forcaPulo));
+                this.GetComponent<Rigidbody2D>().AddForce(new Vector2(0, forcaPulo));
             }
         }
         //Animação de pular
-        
+        if (estaColidindo)
+        {
+            this.animator.SetBool("pular", false);
+        }
+        else
+        {
+            this.animator.SetBool("pular", true);
+        }
     }
     void OnCollisionEnter2D(Collision2D collision)
     {
